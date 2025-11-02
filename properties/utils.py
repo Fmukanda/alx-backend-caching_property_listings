@@ -7,6 +7,8 @@ import math
 
 logger = logging.getLogger(__name__)
 
+# if total_requests > 0 else 0
+
 def get_redis_cache_metrics():
     """
     Retrieve and analyze Redis cache hit/miss metrics.
