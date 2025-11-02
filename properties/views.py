@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_page
 from django.http import JsonResponse
 from .utils import (
     get_all_properties, 
