@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Listings</title>
+    <style>
+        .property-list {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .property-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .property-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .property-price {
+            font-size: 1.25em;
+            color: #2c5aa0;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .property-location {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .property-description {
+            color: #444;
+            line-height: 1.5;
+        }
+        .property-meta {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 10px;
+        }
+        .cache-info {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2c5aa0;
+        }
+        .cached-true {
+            border-left-color: #28a745;
+            background: #f0fff4;
+        }
+        .cached-false {
+            border-left-color: #dc3545;
+            background: #fff0f0;
+        }
+        .cache-controls {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="property-list">
+        <h1>Property Listings</h1>
+        
+        <div class="cache-controls">
+            <strong>Cache Controls:</strong>
+            <a href="?clear_cache=true" class="btn btn-danger">Clear Cache</a>
+            <a href="/properties/uncached/" class="btn">View Uncached</a>
+            <a href="/properties/" class="btn btn-success">View Cached</a>
+        </div>
+    >
+        <div class="signal-info" style="background: #fff3cd; padding: 10px; border-radius: 4px; margin: 10px 0; border-left: 4px solid #ffc107;">
+            <strong>Signals Active:</strong> Cache automatically invalidates on property create/update/delete
+            <br>
+            <small><a href="/properties/create-sample/">Create test property</a> to see signals in action</small>
+        </div>
+
+        <div class="cache-controls">
+            <strong>Cache Controls:</strong>
+            <a href="?clear_cache=true" class="btn btn-danger">Clear Cache</a>
+            <a href="/properties/uncached/" class="btn">View Uncached</a>
+            <a href="/properties/" class="btn btn-success">View Cached</a>
+            <a href="/properties/cache-metrics/" class="btn">📊 Cache Metrics</a>
+        </div>
+
+        <div class="cache-info {% if is_cached %}cached-true{% else %}cached-false{% endif %}">
+            <strong>Cache Status:</strong> 
+            {% if is_cached %}
+                ✅ Serving from Redis Cache (1-hour cache)
+                <br><small>Cached count: {{ cached_count }} properties</small>
+            {% else %}
+                ⚡ Fresh Database Query (Next loads will be cached)
+            {% endif %}
+            {% if cache_cleared %}
+                <br><strong>🗑️ Cache has been cleared!</strong>
+            {% endif %}
+            <br>
+            <small>Cache Key: {{ cache_key }}</small>
+            <br>
+            <small>Cache TTL: 1 hour (3600 seconds)</small>
+        </div>
+
+        <p>Total properties: {{ total_properties }}</p>
+
+        {% if properties %}
+            {% for property in properties %}
+                <div class="property-card">
+                    <h2 class="property-title">{{ property.title }}</h2>
+                    <div class="property-price">${{ property.price }}</div>
+                    <div class="property-location">📍 {{ property.location }}</div>
+                    <div class="property-description">{{ property.description }}</div>
+                    <div class="property-meta">
+                        Listed on: {{ property.created_at|date:"M d, Y H:i" }}
+                        <br>ID: {{ property.id }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No properties available at the moment.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
